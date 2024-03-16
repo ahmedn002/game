@@ -4,9 +4,9 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
 import 'package:my_game/actors/actor.dart';
 import 'package:my_game/game.dart';
+import 'package:my_game/main.dart';
 import 'package:my_game/skills/dash.dart';
 import 'package:my_game/skills/skill.dart';
 
@@ -19,9 +19,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
   // Movement parameters
   final double _movementSpeed = 100;
-  Vector2 _velocity = Vector2.zero();
-  Direction horizontalDirection = Direction.none;
-  Direction verticalDirection = Direction.none;
+  final Vector2 _velocity = Vector2.zero();
   bool isFacingLeft = false;
 
   // Skills
@@ -80,15 +78,14 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
   ///////////////////////////////////////////////////////////
 
   void _updatePosition(double dt) {
-    if (horizontalDirection == Direction.none && verticalDirection == Direction.none) {
+    if (_velocity.x == 0 && _velocity.y == 0) {
       current = PlayerState.idle;
       return;
     }
 
     current = PlayerState.running;
 
-    _velocity = Vector2(_getHorizontalMovementComponent(), _getVerticalMovementComponent());
-    final bool isMovingDiagonally = horizontalDirection != Direction.none && verticalDirection != Direction.none;
+    final bool isMovingDiagonally = _velocity.x != 0 && _velocity.y != 0;
 
     // If Player is moving diagonally
     // Velocity vector speed becomes sqrt(movementSpeed^2 + movementSpeed^2) = sqrt(2 * movementSpeed^2)
@@ -96,41 +93,20 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     // Solving for [ movementSpeed = sqrt(2 * movementSpeed^2) * x ]
     // x = 1 / sqrt(2)
 
-    if (isMovingDiagonally) {
-      _velocity = velocity * (1 / sqrt2);
-    }
+    double factor = isMovingDiagonally ? (1 / sqrt2) : 1;
 
-    position += velocity * dt;
-  }
-
-  double _getHorizontalMovementComponent() {
-    double dx = 0;
-    if (horizontalDirection == Direction.none) {
-      return dx;
-    }
-    return (horizontalDirection == Direction.left ? -1 : 1) * movementSpeed;
-  }
-
-  double _getVerticalMovementComponent() {
-    double dy = 0;
-    if (verticalDirection == Direction.none) {
-      return dy;
-    }
-    return (verticalDirection == Direction.up ? -1 : 1) * movementSpeed;
+    position += velocity * dt * factor;
   }
 
   // Handle vertically flipping character model based on the current running direction
   void _handleSpriteFlipByMovementDirection() {
-    if (horizontalDirection == Direction.left) {
-      if (!isFacingLeft) {
-        flipHorizontallyAroundCenter();
-        isFacingLeft = true;
-      }
-    } else if (horizontalDirection == Direction.right) {
-      if (isFacingLeft) {
-        flipHorizontallyAroundCenter();
-        isFacingLeft = false;
-      }
+    if (velocity.x == 0) return;
+
+    final bool isMovingRight = _velocity.x > 0;
+
+    if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
+      isFacingLeft = !isFacingLeft;
+      flipHorizontallyAroundCenter();
     }
   }
 
@@ -144,6 +120,9 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     _handleVerticalMovementKeyPress(keysPressed);
     _handleSkillsKeyPress(keysPressed);
 
+    logger.i(keysPressed);
+    logger.t('Player velocity in KeyEvent: $_velocity');
+
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -154,7 +133,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
       skillsQueue.add(Dash(actor: this));
     }
 
-    Logger().i(skillsQueue);
+    // Logger().i(skillsQueue);
   }
 
   void _handleVerticalMovementKeyPress(Set<LogicalKeyboardKey> keysPressed) {
@@ -162,13 +141,13 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     final bool downKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
     if (upKeyPressed && downKeyPressed) {
-      verticalDirection = Direction.none;
+      _velocity.y = 0;
     } else if (upKeyPressed) {
-      verticalDirection = Direction.up;
+      _velocity.y = -_movementSpeed;
     } else if (downKeyPressed) {
-      verticalDirection = Direction.down;
+      _velocity.y = _movementSpeed;
     } else {
-      verticalDirection = Direction.none;
+      _velocity.y = 0;
     }
   }
 
@@ -177,13 +156,13 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     final bool rightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
     if (leftKeyPressed && rightKeyPressed) {
-      horizontalDirection = Direction.none;
+      _velocity.x = 0;
     } else if (leftKeyPressed) {
-      horizontalDirection = Direction.left;
+      _velocity.x = -_movementSpeed;
     } else if (rightKeyPressed) {
-      horizontalDirection = Direction.right;
+      _velocity.x = _movementSpeed;
     } else {
-      horizontalDirection = Direction.none;
+      _velocity.x = 0;
     }
   }
 
