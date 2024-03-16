@@ -198,8 +198,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
   ///////////////////////////////////////////////////////////
 
   void _loadAnimations() {
-    idleAnimation = _spriteAnimation(state: 'Idle', amount: 11);
-    runningAnimation = _spriteAnimation(state: 'Run', amount: 12);
+    idleAnimation = _spriteAnimation(state: 'IDLE', amount: 3);
+    runningAnimation = _spriteAnimation(state: 'WALK', amount: 8, stepTime: 0.1);
 
     animations = {
       PlayerState.idle: idleAnimation,
@@ -209,13 +209,13 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     current = PlayerState.running;
   }
 
-  SpriteAnimation _spriteAnimation({required final String state, required final int amount}) {
+  SpriteAnimation _spriteAnimation({required final String state, required final int amount, final double stepTime = 0.25}) {
     return SpriteAnimation.fromFrameData(
-      game.images.fromCache('Main Characters/$character/texture.png'),
+      game.images.fromCache('Characters/Main/$state.png'),
       SpriteAnimationData.sequenced(
-        amount: 4,
-        stepTime: .25,
-        textureSize: Vector2.all(32),
+        amount: amount,
+        stepTime: stepTime,
+        textureSize: Vector2.all(96),
       ),
     );
   }
