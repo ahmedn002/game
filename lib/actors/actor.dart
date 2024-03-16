@@ -5,5 +5,6 @@ abstract class Actor {
   double get health;
   double get maxHealth;
   Vector2 get velocity;
+  Vector2 get position;
   double get movementSpeed;
 }

@@ -77,6 +77,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
   //////////////// --- Movement Handling --- ////////////////
   ///////////////////////////////////////////////////////////
 
+  bool get isMovingDiagonally => velocity.x != 0 && velocity.y != 0;
+
   void _updatePosition(double dt) {
     if (_velocity.x == 0 && _velocity.y == 0) {
       current = PlayerState.idle;
@@ -84,8 +86,6 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     }
 
     current = PlayerState.running;
-
-    final bool isMovingDiagonally = _velocity.x != 0 && _velocity.y != 0;
 
     // If Player is moving diagonally
     // Velocity vector speed becomes sqrt(movementSpeed^2 + movementSpeed^2) = sqrt(2 * movementSpeed^2)
