@@ -38,25 +38,25 @@ class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks 
   }
 
   void _updateJoystick() {
-    final bool movingLeft = [
-      JoystickDirection.left,
-      JoystickDirection.downLeft,
-      JoystickDirection.upLeft,
-    ].contains(joystick.direction);
+    // final bool movingLeft = [
+    //   JoystickDirection.left,
+    //   JoystickDirection.downLeft,
+    //   JoystickDirection.upLeft,
+    // ].contains(joystick.direction);
+    //
+    // final bool movingRight = [
+    //   JoystickDirection.right,
+    //   JoystickDirection.downRight,
+    //   JoystickDirection.upRight,
+    // ].contains(joystick.direction);
 
-    final bool movingRight = [
-      JoystickDirection.right,
-      JoystickDirection.downRight,
-      JoystickDirection.upRight,
-    ].contains(joystick.direction);
-
-    if (movingLeft) {
-      player.direction = PlayerDirection.left;
-    } else if (movingRight) {
-      player.direction = PlayerDirection.right;
-    } else {
-      player.direction = PlayerDirection.none;
-    }
+    // if (movingLeft) {
+    //   player.direction = PlayerDirection.left;
+    // } else if (movingRight) {
+    //   player.direction = PlayerDirection.right;
+    // } else {
+    //   player.direction = PlayerDirection.none;
+    // }
   }
 
   void _createLevel() {

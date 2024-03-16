@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +12,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
   final double movementSpeed = 100;
   Vector2 velocity = Vector2.zero();
-  PlayerDirection direction = PlayerDirection.none;
+  PlayerDirection horizontalDirection = PlayerDirection.none;
+  PlayerDirection verticalDirection = PlayerDirection.none;
   bool isFacingLeft = false;
 
   final String character;
@@ -37,44 +39,80 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     final bool leftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final bool rightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
+    final bool upKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp);
+    final bool downKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
     if (leftKeyPressed && rightKeyPressed) {
-      direction = PlayerDirection.none;
+      horizontalDirection = PlayerDirection.none;
     } else if (leftKeyPressed) {
-      direction = PlayerDirection.left;
+      horizontalDirection = PlayerDirection.left;
     } else if (rightKeyPressed) {
-      direction = PlayerDirection.right;
+      horizontalDirection = PlayerDirection.right;
     } else {
-      direction = PlayerDirection.none;
+      horizontalDirection = PlayerDirection.none;
+    }
+
+    if (upKeyPressed && downKeyPressed) {
+      verticalDirection = PlayerDirection.none;
+    } else if (upKeyPressed) {
+      verticalDirection = PlayerDirection.up;
+    } else if (downKeyPressed) {
+      verticalDirection = PlayerDirection.down;
+    } else {
+      verticalDirection = PlayerDirection.none;
     }
 
     return super.onKeyEvent(event, keysPressed);
   }
 
   void _updatePosition(double dt) {
-    double dx = 0;
-
-    if (direction == PlayerDirection.none) {
+    if (horizontalDirection == PlayerDirection.none && verticalDirection == PlayerDirection.none) {
       current = PlayerState.idle;
       return;
     }
 
     current = PlayerState.running;
-    dx += (direction == PlayerDirection.left ? -1 : 1) * movementSpeed; // If left subtract, if right add
 
-    velocity = Vector2(dx, 0.0);
+    velocity = Vector2(_getHorizontalMovementComponent(), _getVerticalMovementComponent());
+    final bool isMovingVerticallyAndHorizontally = horizontalDirection != PlayerDirection.none && verticalDirection != PlayerDirection.none;
+
+    // If Player is moving diagonally
+    // Velocity vector speed becomes sqrt(movementSpeed^2 + movementSpeed^2) = sqrt(2 * movementSpeed^2)
+    // To keep the same original movement speed we need to multiply by a factor
+    // Solving for [ movementSpeed = sqrt(2 * movementSpeed^2) * x ]
+    // x = 1 / sqrt(2)
+
+    if (isMovingVerticallyAndHorizontally) {
+      velocity = velocity * (1 / sqrt2);
+    }
 
     position += velocity * dt;
   }
 
+  double _getHorizontalMovementComponent() {
+    double dx = 0;
+    if (horizontalDirection == PlayerDirection.none) {
+      return dx;
+    }
+    return (horizontalDirection == PlayerDirection.left ? -1 : 1) * movementSpeed;
+  }
+
+  double _getVerticalMovementComponent() {
+    double dy = 0;
+    if (verticalDirection == PlayerDirection.none) {
+      return dy;
+    }
+    return (verticalDirection == PlayerDirection.up ? -1 : 1) * movementSpeed;
+  }
+
   // Handle vertically flipping character model based on the current running direction
   void _handleSpriteFlipByDirection() {
-    if (direction == PlayerDirection.left) {
+    if (horizontalDirection == PlayerDirection.left) {
       if (!isFacingLeft) {
         flipHorizontallyAroundCenter();
         isFacingLeft = true;
       }
-    } else if (direction == PlayerDirection.right) {
+    } else if (horizontalDirection == PlayerDirection.right) {
       if (isFacingLeft) {
         flipHorizontallyAroundCenter();
         isFacingLeft = false;
@@ -108,4 +146,4 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
 enum PlayerState { idle, running }
 
-enum PlayerDirection { left, right, none }
+enum PlayerDirection { left, right, up, down, none }
