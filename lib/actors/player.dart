@@ -20,12 +20,17 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
   // Movement parameters
   final double _movementSpeed = 100;
   final Vector2 _velocity = Vector2.zero();
+  final Vector2 _storedVelocity = Vector2.zero(); // Used to store future velocity while dashing
   bool isFacingLeft = false;
+  bool _isDashing = false;
 
   // Skills
+  final List<Skill> skills = <Skill>[]; // Skills available to the player
   final Queue<Skill> skillsQueue = Queue<Skill>(); // Skills currently in queue by the player
 
-  Player({this.character = 'Mask Dude'});
+  Player({this.character = 'Mask Dude'}) {
+    skills.add(Dash(actor: this));
+  }
 
   ///////////////////////////////////////////////////////////
   //////////////// --- Actor Interface --- //////////////////
@@ -45,6 +50,22 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
   @override
   double get movementSpeed => _movementSpeed;
+
+  @override
+  void onDashStart() {
+    _isDashing = true;
+    _storedVelocity.setFrom(_velocity);
+  }
+
+  @override
+  void onDashEnd() {
+    _isDashing = false;
+    _velocity.setFrom(_storedVelocity);
+    _storedVelocity.setZero();
+
+    logger.t('Player velocity in onDashEnd: $_velocity');
+    logger.i('Player stored velocity in onDashEnd: $_storedVelocity');
+  }
 
   ///////////////////////////////////////////////////////////
   //////////////// --- Player Game Loop --- /////////////////
@@ -120,8 +141,9 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     _handleVerticalMovementKeyPress(keysPressed);
     _handleSkillsKeyPress(keysPressed);
 
-    logger.i(keysPressed);
-    logger.t('Player velocity in KeyEvent: $_velocity');
+    // logger.f(keysPressed);
+    // logger.t('Player velocity in KeyEvent: $_velocity');
+    // logger.i('Player stored velocity in KeyEvent: $_storedVelocity');
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -130,7 +152,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     final bool spaceKeyPressed = keysPressed.contains(LogicalKeyboardKey.space);
 
     if (spaceKeyPressed) {
-      skillsQueue.add(Dash(actor: this));
+      final Dash dash = skills.firstWhere((skill) => skill is Dash) as Dash;
+      skillsQueue.add(dash);
     }
 
     // Logger().i(skillsQueue);
@@ -140,14 +163,16 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     final bool upKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp);
     final bool downKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
+    final Vector2 velocityToChange = _isDashing ? _storedVelocity : _velocity;
+
     if (upKeyPressed && downKeyPressed) {
-      _velocity.y = 0;
+      velocityToChange.y = 0;
     } else if (upKeyPressed) {
-      _velocity.y = -_movementSpeed;
+      velocityToChange.y = -_movementSpeed;
     } else if (downKeyPressed) {
-      _velocity.y = _movementSpeed;
+      velocityToChange.y = _movementSpeed;
     } else {
-      _velocity.y = 0;
+      velocityToChange.y = 0;
     }
   }
 
@@ -155,14 +180,16 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     final bool leftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final bool rightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
+    final Vector2 velocityToChange = _isDashing ? _storedVelocity : _velocity;
+
     if (leftKeyPressed && rightKeyPressed) {
-      _velocity.x = 0;
+      velocityToChange.x = 0;
     } else if (leftKeyPressed) {
-      _velocity.x = -_movementSpeed;
+      velocityToChange.x = -_movementSpeed;
     } else if (rightKeyPressed) {
-      _velocity.x = _movementSpeed;
+      velocityToChange.x = _movementSpeed;
     } else {
-      _velocity.x = 0;
+      velocityToChange.x = 0;
     }
   }
 

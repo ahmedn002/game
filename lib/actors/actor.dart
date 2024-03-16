@@ -7,4 +7,7 @@ abstract class Actor {
   Vector2 get velocity;
   Vector2 get position;
   double get movementSpeed;
+
+  void onDashStart();
+  void onDashEnd();
 }
