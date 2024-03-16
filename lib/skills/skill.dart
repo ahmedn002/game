@@ -3,6 +3,7 @@ import 'package:my_game/actors/actor.dart';
 abstract class Skill {
   final String name;
   final String description;
+  final SkillType type;
   final double coolDown; // in milliseconds
   bool isOnCoolDown;
   final Actor actor;
@@ -11,6 +12,7 @@ abstract class Skill {
   Skill({
     required this.name,
     required this.description,
+    required this.type,
     required this.coolDown,
     this.isOnCoolDown = false,
     required this.actor,

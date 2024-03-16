@@ -1,75 +1,47 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:my_game/actors/actor.dart';
+import 'package:my_game/actors/components/player_movement_manager.dart';
+import 'package:my_game/actors/components/skill_manager.dart';
+import 'package:my_game/actors/components/sprite_loader.dart';
 import 'package:my_game/game.dart';
-import 'package:my_game/main.dart';
+import 'package:my_game/skills/attack.dart';
 import 'package:my_game/skills/dash.dart';
-import 'package:my_game/skills/skill.dart';
 
 class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, KeyboardHandler implements Actor {
-  // Sprite parameters
-  final String character;
-  late final SpriteAnimation idleAnimation;
-  late final SpriteAnimation runningAnimation;
-  final double stepTime = 0.05; // Seconds
+  final String spritesPath = 'Characters/Main';
+  late final SpriteManager spriteManager;
+  late final PlayerMovementManager movementManager;
+  late final SkillManager skillManager;
 
-  // Movement parameters
-  final double _movementSpeed = 100;
-  final Vector2 _velocity = Vector2.zero();
-  final Vector2 _storedVelocity = Vector2.zero(); // Used to store future velocity while dashing
-  bool isFacingLeft = false;
-  bool _isDashing = false;
-
-  // Skills
-  final List<Skill> skills = <Skill>[]; // Skills available to the player
-  final Queue<Skill> skillsQueue = Queue<Skill>(); // Skills currently in queue by the player
-
-  Player({this.character = 'Mask Dude'}) {
-    skills.add(Dash(actor: this));
+  Player() {
+    _loadAnimations();
+    _loadMovementManager();
+    _loadSkillManager();
   }
-
-  ///////////////////////////////////////////////////////////
-  //////////////// --- Actor Interface --- //////////////////
-  ///////////////////////////////////////////////////////////
 
   @override
   String get name => 'Player';
-
   @override
   double get health => 100;
-
   @override
   double get maxHealth => 100;
+  @override
+  Vector2 get velocity => movementManager.velocity;
+  @override
+  double get movementSpeed => movementManager.movementSpeed;
 
   @override
-  Vector2 get velocity => _velocity;
-
-  @override
-  double get movementSpeed => _movementSpeed;
-
-  @override
-  void onDashStart() {
-    _isDashing = true;
-    _storedVelocity.setFrom(_velocity);
+  void onSkillStart(SkillType skillType) {
+    skillManager.onSkillStart(skillType);
   }
 
   @override
-  void onDashEnd() {
-    _isDashing = false;
-    _velocity.setFrom(_storedVelocity);
-    _storedVelocity.setZero();
-
-    logger.t('Player velocity in onDashEnd: $_velocity');
-    logger.i('Player stored velocity in onDashEnd: $_storedVelocity');
+  void onSkillEnd(SkillType skillType) {
+    skillManager.onSkillEnd(skillType);
   }
-
-  ///////////////////////////////////////////////////////////
-  //////////////// --- Player Game Loop --- /////////////////
-  ///////////////////////////////////////////////////////////
 
   @override
   FutureOr<void> onLoad() {
@@ -80,147 +52,73 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
   @override
   void update(double dt) {
-    _updatePosition(dt);
-    _handleSpriteFlipByMovementDirection();
-    _handleSkillsQueue(dt);
+    movementManager.update(dt);
+    skillManager.update(dt);
 
     super.update(dt);
   }
 
-  void _handleSkillsQueue(double dt) {
-    if (skillsQueue.isNotEmpty) {
-      final Skill skill = skillsQueue.removeFirst(); // Dequeue first skill
-      skill.execute();
-    }
-  }
-
-  ///////////////////////////////////////////////////////////
-  //////////////// --- Movement Handling --- ////////////////
-  ///////////////////////////////////////////////////////////
-
-  bool get isMovingDiagonally => velocity.x != 0 && velocity.y != 0;
-
-  void _updatePosition(double dt) {
-    if (_velocity.x == 0 && _velocity.y == 0) {
-      current = PlayerState.idle;
-      return;
-    }
-
-    current = PlayerState.running;
-
-    // If Player is moving diagonally
-    // Velocity vector speed becomes sqrt(movementSpeed^2 + movementSpeed^2) = sqrt(2 * movementSpeed^2)
-    // To keep the same original movement speed we need to multiply by a factor
-    // Solving for [ movementSpeed = sqrt(2 * movementSpeed^2) * x ]
-    // x = 1 / sqrt(2)
-
-    double factor = isMovingDiagonally ? (1 / sqrt2) : 1;
-
-    position += velocity * dt * factor;
-  }
-
-  // Handle vertically flipping character model based on the current running direction
-  void _handleSpriteFlipByMovementDirection() {
-    if (velocity.x == 0) return;
-
-    final bool isMovingRight = _velocity.x > 0;
-
-    if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
-      isFacingLeft = !isFacingLeft;
-      flipHorizontallyAroundCenter();
-    }
-  }
-
-  ///////////////////////////////////////////////////////////
-  //////////////// --- KeyPress Handling --- ////////////////
-  ///////////////////////////////////////////////////////////
-
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    _handleHorizontalMovementKeyPress(keysPressed);
-    _handleVerticalMovementKeyPress(keysPressed);
-    _handleSkillsKeyPress(keysPressed);
-
-    // logger.f(keysPressed);
-    // logger.t('Player velocity in KeyEvent: $_velocity');
-    // logger.i('Player stored velocity in KeyEvent: $_storedVelocity');
-
+    movementManager.handleKeyEvent(event, keysPressed);
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void _handleSkillsKeyPress(Set<LogicalKeyboardKey> keysPressed) {
-    final bool spaceKeyPressed = keysPressed.contains(LogicalKeyboardKey.space);
-
-    if (spaceKeyPressed) {
-      final Dash dash = skills.firstWhere((skill) => skill is Dash) as Dash;
-      skillsQueue.add(dash);
-    }
-
-    // Logger().i(skillsQueue);
+  void _loadMovementManager() {
+    movementManager = PlayerMovementManager(
+      movementSpeed: 100,
+      spriteAnimationComponent: this,
+      keyPressCallbacks: {
+        LogicalKeyboardKey.space: skillManager.loadSkillIntoQueue<Dash>,
+        LogicalKeyboardKey.keyQ: skillManager.loadSkillIntoQueue<Attack>,
+      },
+    );
   }
 
-  void _handleVerticalMovementKeyPress(Set<LogicalKeyboardKey> keysPressed) {
-    final bool upKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp);
-    final bool downKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
-
-    final Vector2 velocityToChange = _isDashing ? _storedVelocity : _velocity;
-
-    if (upKeyPressed && downKeyPressed) {
-      velocityToChange.y = 0;
-    } else if (upKeyPressed) {
-      velocityToChange.y = -_movementSpeed;
-    } else if (downKeyPressed) {
-      velocityToChange.y = _movementSpeed;
-    } else {
-      velocityToChange.y = 0;
-    }
+  void _loadSkillManager() {
+    skillManager = SkillManager(
+      actor: this,
+      movementManager: movementManager,
+      equippedSkills: [
+        Attack(actor: this),
+        Dash(actor: this),
+      ],
+    );
   }
-
-  void _handleHorizontalMovementKeyPress(Set<LogicalKeyboardKey> keysPressed) {
-    final bool leftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final bool rightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
-
-    final Vector2 velocityToChange = _isDashing ? _storedVelocity : _velocity;
-
-    if (leftKeyPressed && rightKeyPressed) {
-      velocityToChange.x = 0;
-    } else if (leftKeyPressed) {
-      velocityToChange.x = -_movementSpeed;
-    } else if (rightKeyPressed) {
-      velocityToChange.x = _movementSpeed;
-    } else {
-      velocityToChange.x = 0;
-    }
-  }
-
-  ///////////////////////////////////////////////////////////
-  //////////////// --- Animation Handling --- ///////////////
-  ///////////////////////////////////////////////////////////
 
   void _loadAnimations() {
-    idleAnimation = _spriteAnimation(state: 'IDLE', amount: 3);
-    runningAnimation = _spriteAnimation(state: 'WALK', amount: 8, stepTime: 0.1);
-
-    animations = {
-      PlayerState.idle: idleAnimation,
-      PlayerState.running: runningAnimation,
-    };
-
-    current = PlayerState.running;
-  }
-
-  SpriteAnimation _spriteAnimation({required final String state, required final int amount, final double stepTime = 0.25}) {
-    return SpriteAnimation.fromFrameData(
-      game.images.fromCache('Characters/Main/$state.png'),
-      SpriteAnimationData.sequenced(
-        amount: amount,
-        stepTime: stepTime,
-        textureSize: Vector2.all(96),
+    spriteManager = SpriteManager(
+      actor: this,
+      idleAnimationData: Animation(
+        path: '$spritesPath/IDLE.png',
+        frameCount: 3,
+        frameDuration: .33,
+        game: game,
+      ),
+      runAnimationData: Animation(
+        path: '$spritesPath/WALK.png',
+        frameCount: 8,
+        frameDuration: 0.1,
+        game: game,
+      ),
+      attackAnimationData: Animation(
+        path: '$spritesPath/ATTACK.png',
+        frameCount: 7,
+        frameDuration: 0.1,
+        game: game,
       ),
     );
+
+    animations = {
+      ActorState.idle: spriteManager.idleAnimation,
+      ActorState.running: spriteManager.runAnimation,
+      ActorState.attacking: spriteManager.attackAnimation,
+    };
+
+    current = ActorState.running;
   }
 }
 
-enum PlayerState { idle, running }
+enum ActorState { idle, running, attacking }
 
 enum Direction { left, right, up, down, none }

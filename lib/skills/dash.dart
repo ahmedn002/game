@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:my_game/actors/actor.dart';
 import 'package:my_game/skills/skill.dart';
 import 'package:my_game/utils/extensions/vector.dart';
 
@@ -10,7 +11,12 @@ class Dash extends Skill {
 
   Dash({
     required super.actor,
-  }) : super(name: 'Dash', description: 'Dash forward', coolDown: 2000);
+  }) : super(
+          name: 'Dash',
+          description: 'Dash forward',
+          type: SkillType.dash,
+          coolDown: 2000,
+        );
 
   @override
   void action() async {
@@ -20,7 +26,7 @@ class Dash extends Skill {
 
     final double factor = actor.velocity.isDiagonal ? 1 / sqrt2 : 1.0;
 
-    actor.onDashStart();
+    actor.onSkillStart(super.type);
 
     actor.velocity.add(dashVector * factor);
 
@@ -28,6 +34,6 @@ class Dash extends Skill {
       actor.velocity.sub(dashVector * factor);
     });
 
-    actor.onDashEnd();
+    actor.onSkillEnd(super.type);
   }
 }

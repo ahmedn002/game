@@ -8,6 +8,14 @@ abstract class Actor {
   Vector2 get position;
   double get movementSpeed;
 
-  void onDashStart();
-  void onDashEnd();
+  void onSkillStart(SkillType skillType);
+  void onSkillEnd(SkillType skillType);
+}
+
+enum SkillType {
+  dash,
+  attack,
+  heal,
+  buff,
+  debuff,
 }
