@@ -15,6 +15,6 @@ class Attack extends Skill {
   void action() async {
     actor.skillManager.onSkillStart(type);
     await Future.delayed(const Duration(milliseconds: 700));
-    actor.skillManager.onSkillStart(type);
+    actor.skillManager.onSkillEnd(type);
   }
 }

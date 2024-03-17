@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:game/actors/components/movement_manager.dart';
 import 'package:game/actors/components/skill_manager.dart';
@@ -16,7 +18,20 @@ abstract class Actor extends SpriteAnimationGroupComponent {
     required this.name,
     required this.health,
     required this.maxHealth,
-  });
+  }) {
+    movementManager = loadMovementManager();
+    skillManager = loadSkillManager();
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    spriteManager = loadSpriteManager();
+    return super.onLoad();
+  }
+
+  SpriteManager loadSpriteManager();
+  MovementManager loadMovementManager();
+  SkillManager loadSkillManager();
 }
 
 enum SkillType {

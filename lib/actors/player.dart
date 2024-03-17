@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:game/actors/actor.dart';
+import 'package:game/actors/components/movement_manager.dart';
 import 'package:game/actors/components/player_movement_manager.dart';
 import 'package:game/actors/components/skill_manager.dart';
 import 'package:game/actors/components/sprite_loader.dart';
@@ -20,16 +19,7 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
           health: 100,
           maxHealth: 100,
         ) {
-    _loadMovementManager();
-    _loadSkillManager();
     _loadMovementManagerKeyCallbacks();
-  }
-
-  @override
-  FutureOr<void> onLoad() {
-    _loadAnimations();
-
-    return super.onLoad();
   }
 
   @override
@@ -46,13 +36,16 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void _loadMovementManager() {
-    movementManager = PlayerMovementManager(
+  @override
+  MovementManager loadMovementManager() {
+    final MovementManager movementManager = PlayerMovementManager(
       movementSpeed: 100,
       spriteAnimationComponent: this,
     );
 
     playerMovementManager = movementManager as PlayerMovementManager;
+
+    return movementManager;
   }
 
   void _loadMovementManagerKeyCallbacks() {
@@ -62,8 +55,9 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
     };
   }
 
-  void _loadSkillManager() {
-    skillManager = SkillManager(
+  @override
+  SkillManager loadSkillManager() {
+    return SkillManager(
       actor: this,
       movementManager: movementManager,
       equippedSkills: [
@@ -73,8 +67,17 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
     );
   }
 
-  void _loadAnimations() {
-    spriteManager = SpriteManager(
+  @override
+  SpriteManager loadSpriteManager() {
+    animations = {
+      ActorState.idle: spriteManager.idleAnimation,
+      ActorState.running: spriteManager.runAnimation,
+      ActorState.attacking: spriteManager.attackAnimation,
+    };
+
+    current = ActorState.running;
+
+    return SpriteManager(
       actor: this,
       idleAnimationData: Animation(
         frameCount: 3,
@@ -92,14 +95,6 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
         image: game.images.fromCache('$spritesPath/ATTACK.png'),
       ),
     );
-
-    animations = {
-      ActorState.idle: spriteManager.idleAnimation,
-      ActorState.running: spriteManager.runAnimation,
-      ActorState.attacking: spriteManager.attackAnimation,
-    };
-
-    current = ActorState.running;
   }
 }
 
