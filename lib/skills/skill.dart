@@ -1,4 +1,4 @@
-import 'package:my_game/actors/actor.dart';
+import 'package:game/actors/actor.dart';
 
 abstract class Skill {
   final String name;

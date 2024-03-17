@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:my_game/actors/player.dart';
+import 'package:game/actors/player.dart';
 
 class Level extends World {
   late TiledComponent level;

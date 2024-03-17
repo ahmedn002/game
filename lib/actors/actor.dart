@@ -1,15 +1,22 @@
 import 'package:flame/components.dart';
+import 'package:game/actors/components/movement_manager.dart';
+import 'package:game/actors/components/skill_manager.dart';
+import 'package:game/actors/components/sprite_loader.dart';
 
-abstract class Actor {
-  String get name;
-  double get health;
-  double get maxHealth;
-  Vector2 get velocity;
-  Vector2 get position;
-  double get movementSpeed;
+abstract class Actor extends SpriteAnimationGroupComponent {
+  final String name;
+  final double health;
+  final double maxHealth;
 
-  void onSkillStart(SkillType skillType);
-  void onSkillEnd(SkillType skillType);
+  late final SpriteManager spriteManager;
+  late final MovementManager movementManager;
+  late final SkillManager skillManager;
+
+  Actor({
+    required this.name,
+    required this.health,
+    required this.maxHealth,
+  });
 }
 
 enum SkillType {

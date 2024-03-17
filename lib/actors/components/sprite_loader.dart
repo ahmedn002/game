@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
-import 'package:my_game/actors/actor.dart';
+import 'package:game/actors/actor.dart';
 
 class SpriteManager {
   final Actor actor;
@@ -26,21 +27,19 @@ class SpriteManager {
 }
 
 class Animation {
-  final String path;
   final int frameCount;
   final double frameDuration;
-  final Game game;
+  final Image image;
 
   Animation({
-    required this.path,
     required this.frameCount,
     required this.frameDuration,
-    required this.game,
+    required this.image,
   });
 
   SpriteAnimation load() {
     return SpriteAnimation.fromFrameData(
-      game.images.fromCache(path),
+      image,
       SpriteAnimationData.sequenced(
         amount: frameCount,
         textureSize: Vector2.all(96),

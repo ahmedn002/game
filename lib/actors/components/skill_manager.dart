@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:flame/components.dart';
-import 'package:my_game/actors/actor.dart';
-import 'package:my_game/actors/components/movement_manager.dart';
-import 'package:my_game/actors/player.dart';
-import 'package:my_game/skills/skill.dart';
+import 'package:game/actors/actor.dart';
+import 'package:game/actors/components/movement_manager.dart';
+import 'package:game/actors/player.dart';
+import 'package:game/skills/skill.dart';
 
 class SkillManager {
   final SpriteAnimationGroupComponent actor;

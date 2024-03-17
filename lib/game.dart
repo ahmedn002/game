@@ -4,8 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:my_game/actors/player.dart';
-import 'package:my_game/levels/level.dart';
+import 'package:game/actors/player.dart';
+import 'package:game/levels/level.dart';
 
 class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks {
   late final Player player;

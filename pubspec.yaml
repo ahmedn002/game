@@ -1,4 +1,4 @@
-name: my_game
+name: game
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -91,6 +92,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
   assets:
     - assets/images/
     - assets/images/Terrain/
@@ -101,3 +104,4 @@ flutter:
     - assets/images/Main Characters/Pink Man/
     - assets/images/Main Characters/Virtual Guy/
     - assets/tiles/
+

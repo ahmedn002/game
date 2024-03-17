@@ -2,17 +2,16 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:my_game/actors/components/movement_manager.dart';
-import 'package:my_game/actors/player.dart';
-import 'package:my_game/utils/extensions/vector.dart';
+import 'package:game/actors/components/movement_manager.dart';
+import 'package:game/actors/player.dart';
+import 'package:game/utils/extensions/vector.dart';
 
 class PlayerMovementManager extends MovementManager {
-  final Map<LogicalKeyboardKey, void Function()> keyPressCallbacks;
+  late final Map<LogicalKeyboardKey, void Function()> keyPressCallbacks;
 
   PlayerMovementManager({
     required super.movementSpeed,
     required super.spriteAnimationComponent,
-    required this.keyPressCallbacks,
   });
 
   @override

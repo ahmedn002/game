@@ -1,5 +1,5 @@
-import 'package:my_game/actors/actor.dart';
-import 'package:my_game/skills/skill.dart';
+import 'package:game/actors/actor.dart';
+import 'package:game/skills/skill.dart';
 
 class Attack extends Skill {
   Attack({
@@ -13,9 +13,8 @@ class Attack extends Skill {
 
   @override
   void action() async {
-    actor.onSkillStart(super.type);
-    print('Attacking ${target}');
+    actor.skillManager.onSkillStart(type);
     await Future.delayed(const Duration(milliseconds: 700));
-    actor.onSkillEnd(super.type);
+    actor.skillManager.onSkillStart(type);
   }
 }

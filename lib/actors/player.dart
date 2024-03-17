@@ -2,45 +2,27 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:my_game/actors/actor.dart';
-import 'package:my_game/actors/components/player_movement_manager.dart';
-import 'package:my_game/actors/components/skill_manager.dart';
-import 'package:my_game/actors/components/sprite_loader.dart';
-import 'package:my_game/game.dart';
-import 'package:my_game/skills/attack.dart';
-import 'package:my_game/skills/dash.dart';
+import 'package:game/actors/actor.dart';
+import 'package:game/actors/components/player_movement_manager.dart';
+import 'package:game/actors/components/skill_manager.dart';
+import 'package:game/actors/components/sprite_loader.dart';
+import 'package:game/game.dart';
+import 'package:game/skills/attack.dart';
+import 'package:game/skills/dash.dart';
 
-class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, KeyboardHandler implements Actor {
+class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
   final String spritesPath = 'Characters/Main';
-  late final SpriteManager spriteManager;
-  late final PlayerMovementManager movementManager;
-  late final SkillManager skillManager;
+  late final PlayerMovementManager playerMovementManager;
 
-  Player() {
-    _loadAnimations();
+  Player()
+      : super(
+          name: 'Player',
+          health: 100,
+          maxHealth: 100,
+        ) {
     _loadMovementManager();
     _loadSkillManager();
-  }
-
-  @override
-  String get name => 'Player';
-  @override
-  double get health => 100;
-  @override
-  double get maxHealth => 100;
-  @override
-  Vector2 get velocity => movementManager.velocity;
-  @override
-  double get movementSpeed => movementManager.movementSpeed;
-
-  @override
-  void onSkillStart(SkillType skillType) {
-    skillManager.onSkillStart(skillType);
-  }
-
-  @override
-  void onSkillEnd(SkillType skillType) {
-    skillManager.onSkillEnd(skillType);
+    _loadMovementManagerKeyCallbacks();
   }
 
   @override
@@ -60,7 +42,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    movementManager.handleKeyEvent(event, keysPressed);
+    playerMovementManager.handleKeyEvent(event, keysPressed);
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -68,11 +50,16 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     movementManager = PlayerMovementManager(
       movementSpeed: 100,
       spriteAnimationComponent: this,
-      keyPressCallbacks: {
-        LogicalKeyboardKey.space: skillManager.loadSkillIntoQueue<Dash>,
-        LogicalKeyboardKey.keyQ: skillManager.loadSkillIntoQueue<Attack>,
-      },
     );
+
+    playerMovementManager = movementManager as PlayerMovementManager;
+  }
+
+  void _loadMovementManagerKeyCallbacks() {
+    playerMovementManager.keyPressCallbacks = {
+      LogicalKeyboardKey.space: super.skillManager.loadSkillIntoQueue<Dash>,
+      LogicalKeyboardKey.keyQ: super.skillManager.loadSkillIntoQueue<Attack>,
+    };
   }
 
   void _loadSkillManager() {
@@ -90,22 +77,19 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<MyGame>, Keyb
     spriteManager = SpriteManager(
       actor: this,
       idleAnimationData: Animation(
-        path: '$spritesPath/IDLE.png',
         frameCount: 3,
         frameDuration: .33,
-        game: game,
+        image: game.images.fromCache('$spritesPath/IDLE.png'),
       ),
       runAnimationData: Animation(
-        path: '$spritesPath/WALK.png',
         frameCount: 8,
         frameDuration: 0.1,
-        game: game,
+        image: game.images.fromCache('$spritesPath/WALK.png'),
       ),
       attackAnimationData: Animation(
-        path: '$spritesPath/ATTACK.png',
         frameCount: 7,
         frameDuration: 0.1,
-        game: game,
+        image: game.images.fromCache('$spritesPath/ATTACK.png'),
       ),
     );
 
