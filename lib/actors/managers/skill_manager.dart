@@ -2,8 +2,7 @@ import 'dart:collection';
 
 import 'package:flame/components.dart';
 import 'package:game/actors/actor.dart';
-import 'package:game/actors/components/movement_manager.dart';
-import 'package:game/actors/player.dart';
+import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/skills/skill.dart';
 
 class SkillManager {

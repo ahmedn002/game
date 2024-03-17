@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:game/actors/actor.dart';
 
 abstract class MovementManager {
   final double movementSpeed;
@@ -7,14 +8,14 @@ abstract class MovementManager {
   bool isFacingLeft;
   bool isInUninterruptibleAnimation;
   bool isInStoppingAnimation;
-  final SpriteAnimationGroupComponent spriteAnimationComponent;
+  final Actor actor;
 
   MovementManager({
     required this.movementSpeed,
     this.isFacingLeft = false,
     this.isInUninterruptibleAnimation = false,
     this.isInStoppingAnimation = false,
-    required this.spriteAnimationComponent,
+    required this.actor,
   }) {
     storedVelocity = Vector2.zero();
     velocity = Vector2.zero();

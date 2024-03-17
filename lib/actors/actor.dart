@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:game/actors/components/movement_manager.dart';
-import 'package:game/actors/components/skill_manager.dart';
-import 'package:game/actors/components/sprite_loader.dart';
+import 'package:game/actors/managers/movement_manager.dart';
+import 'package:game/actors/managers/skill_manager.dart';
+import 'package:game/actors/managers/sprite_loader.dart';
 
 abstract class Actor extends SpriteAnimationGroupComponent {
   final String name;
@@ -32,7 +32,16 @@ abstract class Actor extends SpriteAnimationGroupComponent {
   SpriteManager loadSpriteManager();
   MovementManager loadMovementManager();
   SkillManager loadSkillManager();
+
+  void setAnimationMap({required Map<ActorState, SpriteAnimation> animationMap, required ActorState initialState}) {
+    animations = animationMap;
+    current = initialState;
+  }
 }
+
+enum ActorState { idle, running, attacking }
+
+enum Direction { left, right, up, down, none }
 
 enum SkillType {
   dash,

@@ -24,6 +24,14 @@ class SpriteManager {
     runAnimation = runAnimationData.load();
     attackAnimation = attackAnimationData.load();
   }
+
+  void setAnimationMap(Map<ActorState, SpriteAnimation> animations) {
+    actor.animations = animations;
+  }
+
+  void setCurrentAnimation(ActorState state) {
+    actor.current = state;
+  }
 }
 
 class Animation {

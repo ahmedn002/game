@@ -2,16 +2,17 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:game/actors/components/movement_manager.dart';
-import 'package:game/actors/player.dart';
+import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/utils/extensions/vector.dart';
+
+import '../actor.dart';
 
 class PlayerMovementManager extends MovementManager {
   late final Map<LogicalKeyboardKey, void Function()> keyPressCallbacks;
 
   PlayerMovementManager({
     required super.movementSpeed,
-    required super.spriteAnimationComponent,
+    required super.actor,
   });
 
   @override
@@ -21,16 +22,15 @@ class PlayerMovementManager extends MovementManager {
   }
 
   void _updatePosition(double dt) {
-    if (velocity.x == 0 && velocity.y == 0) {
-      if (!isInUninterruptibleAnimation) {
-        spriteAnimationComponent.current = ActorState.idle;
-      }
-
+    // If no velocity and not in an uninterruptible animation
+    if (velocity.isZero() && !isInUninterruptibleAnimation) {
+      actor.current = ActorState.idle;
       return;
     }
 
+    // If we are not doing something else, start running because there is velocity
     if (!isInUninterruptibleAnimation) {
-      spriteAnimationComponent.current = ActorState.running;
+      actor.current = ActorState.running;
     }
 
     // If Player is moving diagonally
@@ -41,11 +41,12 @@ class PlayerMovementManager extends MovementManager {
 
     double factor = velocity.isDiagonal ? (1 / sqrt2) : 1;
 
+    // If we are doing an activity which requires the character to stop, set the velocity to zero
     if (isInStoppingAnimation) {
       velocity.setZero();
     }
 
-    spriteAnimationComponent.position += velocity * dt * factor;
+    actor.position += velocity * dt * factor;
   }
 
   void _handleSpriteFlipByMovementDirection() {
@@ -55,7 +56,7 @@ class PlayerMovementManager extends MovementManager {
 
     if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
       isFacingLeft = !isFacingLeft;
-      spriteAnimationComponent.flipHorizontallyAroundCenter();
+      actor.flipHorizontallyAroundCenter();
     }
   }
 
