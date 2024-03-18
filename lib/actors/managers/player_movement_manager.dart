@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:game/actors/managers/movement_manager.dart';
-import 'package:game/utils/extensions/vector.dart';
 import 'package:game/utils/settings/logs.dart';
 
 import '../../main.dart';
@@ -36,20 +33,12 @@ class PlayerMovementManager extends MovementManager {
       actor.current = ActorState.running;
     }
 
-    // If Player is moving diagonally
-    // Velocity vector speed becomes sqrt(movementSpeed^2 + movementSpeed^2) = sqrt(2 * movementSpeed^2)
-    // To keep the same original movement speed we need to multiply by a factor
-    // Solving for [ movementSpeed = sqrt(2 * movementSpeed^2) * x ]
-    // x = 1 / sqrt(2)
-
-    double factor = velocity.isDiagonal ? (1 / sqrt2) : 1;
-
     // If we are doing an activity which requires the character to stop, set the velocity to zero
     if (isInStoppingAnimation) {
       velocity.setZero();
     }
 
-    actor.position += velocity * dt * factor;
+    actor.position += velocity.normalized() * movementSpeed * dt;
   }
 
   void handleKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -100,9 +89,9 @@ class PlayerMovementManager extends MovementManager {
     if (upKeyPressed && downKeyPressed) {
       velocityToChange.y = 0;
     } else if (upKeyPressed) {
-      velocityToChange.y = -movementSpeed;
+      velocityToChange.y = -1;
     } else if (downKeyPressed) {
-      velocityToChange.y = movementSpeed;
+      velocityToChange.y = 1;
     } else {
       velocityToChange.y = 0;
     }
@@ -117,9 +106,9 @@ class PlayerMovementManager extends MovementManager {
     if (leftKeyPressed && rightKeyPressed) {
       velocityToChange.x = 0;
     } else if (leftKeyPressed) {
-      velocityToChange.x = -movementSpeed;
+      velocityToChange.x = -1;
     } else if (rightKeyPressed) {
-      velocityToChange.x = movementSpeed;
+      velocityToChange.x = 1;
     } else {
       velocityToChange.x = 0;
     }
