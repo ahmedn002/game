@@ -15,30 +15,12 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
   final String spritesPath = 'Heroes/Cloak';
   late final PlayerMovementManager playerMovementManager;
 
-  Player() : super(name: 'Player', health: 100, maxHealth: 100) {
-    _loadMovementManagerKeyCallbacks();
-  }
+  Player() : super(name: 'Player', health: 100, maxHealth: 100);
 
   @override
   FutureOr<void> onLoad() {
-    super.onLoad(); // Loads SpriteManager
-
-    setAnimationMap(
-      animationMap: {
-        ActorState.idle: spriteManager.idleAnimation,
-        ActorState.running: spriteManager.runAnimation,
-        ActorState.attacking: spriteManager.attackAnimation,
-      },
-      initialState: ActorState.idle,
-    );
-  }
-
-  @override
-  void update(double dt) {
-    movementManager.update(dt);
-    skillManager.update(dt);
-
-    super.update(dt);
+    super.onLoad(); // Loads All managers now that we have the gameRef
+    _loadMovementManagerKeyCallbacks();
   }
 
   @override

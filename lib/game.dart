@@ -4,11 +4,9 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:game/actors/player.dart';
 import 'package:game/levels/level.dart';
 
 class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks {
-  late final Player player;
   late final World level;
   late final JoystickComponent joystick;
   final bool useJoystick = false;
@@ -20,6 +18,7 @@ class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks 
 
   @override
   FutureOr<void> onLoad() async {
+    debugMode = true;
     await images.loadAllImages();
 
     _createLevel();
@@ -60,8 +59,7 @@ class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks 
   }
 
   void _createLevel() {
-    player = Player();
-    level = Level(levelName: 'level-01', player: player);
+    level = Level(levelName: 'level-01');
   }
 
   void _initCamera() {

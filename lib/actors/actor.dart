@@ -18,15 +18,28 @@ abstract class Actor extends SpriteAnimationGroupComponent {
     required this.name,
     required this.health,
     required this.maxHealth,
-  }) {
-    movementManager = loadMovementManager();
-    skillManager = loadSkillManager();
-  }
+  });
 
   @override
   FutureOr<void> onLoad() {
-    spriteManager = loadSpriteManager();
+    constructManagers();
+    setAnimationMap(
+      animationMap: {
+        ActorState.idle: spriteManager.idleAnimation,
+        ActorState.running: spriteManager.runAnimation,
+        ActorState.attacking: spriteManager.attackAnimation,
+      },
+      initialState: ActorState.idle,
+    );
+    anchor = Anchor.center;
     return super.onLoad();
+  }
+
+  @override
+  void update(double dt) {
+    movementManager.update(dt);
+    skillManager.update(dt);
+    super.update(dt);
   }
 
   SpriteManager loadSpriteManager();
@@ -36,6 +49,12 @@ abstract class Actor extends SpriteAnimationGroupComponent {
   void setAnimationMap({required Map<ActorState, SpriteAnimation> animationMap, required ActorState initialState}) {
     animations = animationMap;
     current = initialState;
+  }
+
+  void constructManagers() {
+    spriteManager = loadSpriteManager();
+    movementManager = loadMovementManager();
+    skillManager = loadSkillManager();
   }
 }
 

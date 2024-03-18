@@ -21,5 +21,19 @@ abstract class MovementManager {
     velocity = Vector2.zero();
   }
 
-  void update(double dt);
+  void update(double dt) {
+    _handleSpriteFlipByMovementDirection();
+  }
+
+  void _handleSpriteFlipByMovementDirection() {
+    if (velocity.x == 0) return;
+
+    final bool isFacingLeft = actor.isFlippedHorizontally;
+
+    final bool isMovingRight = velocity.x > 0;
+
+    if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
+      actor.flipHorizontallyAroundCenter();
+    }
+  }
 }

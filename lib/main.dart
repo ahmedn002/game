@@ -1,8 +1,8 @@
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:game/game.dart';
+import 'package:logger/logger.dart';
 
 final Logger logger = Logger();
 

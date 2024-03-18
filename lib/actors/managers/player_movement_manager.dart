@@ -21,7 +21,7 @@ class PlayerMovementManager extends MovementManager {
   @override
   void update(double dt) {
     _updatePosition(dt);
-    _handleSpriteFlipByMovementDirection();
+    super.update(dt);
   }
 
   void _updatePosition(double dt) {
@@ -50,17 +50,6 @@ class PlayerMovementManager extends MovementManager {
     }
 
     actor.position += velocity * dt * factor;
-  }
-
-  void _handleSpriteFlipByMovementDirection() {
-    if (velocity.x == 0) return;
-
-    final bool isMovingRight = velocity.x > 0;
-
-    if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
-      isFacingLeft = !isFacingLeft;
-      actor.flipHorizontallyAroundCenter();
-    }
   }
 
   void handleKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
