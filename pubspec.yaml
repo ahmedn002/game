@@ -96,12 +96,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/Heroes/Knight/
+    - assets/images/Heroes/Cloak/
     - assets/images/Terrain/
-    - assets/images/HUD/
-    - assets/images/Characters/Main/
-    - assets/images/Main Characters/Mask Dude/
-    - assets/images/Main Characters/Ninja Frog/
-    - assets/images/Main Characters/Pink Man/
-    - assets/images/Main Characters/Virtual Guy/
     - assets/tiles/
 

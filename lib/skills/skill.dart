@@ -6,8 +6,10 @@ abstract class Skill {
   final SkillType type;
   final double coolDown; // in milliseconds
   bool isOnCoolDown;
+  final bool isUninterruptibleAnimation;
+  final bool isStoppingAnimation;
   final Actor actor;
-  final Actor? target;
+  final ActorState actorState;
 
   Skill({
     required this.name,
@@ -16,14 +18,16 @@ abstract class Skill {
     required this.coolDown,
     this.isOnCoolDown = false,
     required this.actor,
-    this.target,
+    this.actorState = ActorState.idle,
+    required this.isUninterruptibleAnimation,
+    required this.isStoppingAnimation,
   });
 
   // Should call execute when the skill is used
   // Handles the cooldown and the action of the skill
-  void execute() {
+  void execute({final Actor? target}) {
     if (!isOnCoolDown) {
-      action();
+      action(target: target);
       isOnCoolDown = true;
       Future.delayed(Duration(microseconds: (coolDown * 1000).toInt()), () {
         isOnCoolDown = false;
@@ -32,5 +36,5 @@ abstract class Skill {
   }
 
   // Should override action when implementing a new skill
-  void action();
+  void action({final Actor? target});
 }

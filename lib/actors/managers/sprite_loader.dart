@@ -38,20 +38,27 @@ class Animation {
   final int frameCount;
   final double frameDuration;
   final Image image;
+  final Vector2 size;
+  late Vector2? position;
 
   Animation({
     required this.frameCount,
     required this.frameDuration,
     required this.image,
-  });
+    required this.size,
+    this.position,
+  }) {
+    position ??= Vector2.zero();
+  }
 
   SpriteAnimation load() {
     return SpriteAnimation.fromFrameData(
       image,
       SpriteAnimationData.sequenced(
         amount: frameCount,
-        textureSize: Vector2.all(96),
+        textureSize: size,
         stepTime: frameDuration,
+        texturePosition: position,
       ),
     );
   }

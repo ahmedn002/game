@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:game/actors/player.dart';
 import 'package:game/levels/level.dart';
 
@@ -15,7 +15,7 @@ class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks 
 
   @override
   Color backgroundColor() {
-    return const Color(0xFFFFFFFF);
+    return Colors.grey;
   }
 
   @override

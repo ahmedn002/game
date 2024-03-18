@@ -4,11 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/utils/extensions/vector.dart';
+import 'package:game/utils/settings/logs.dart';
 
+import '../../main.dart';
 import '../actor.dart';
 
 class PlayerMovementManager extends MovementManager {
   late final Map<LogicalKeyboardKey, void Function()> keyPressCallbacks;
+  Set<LogicalKeyboardKey> keysLastPressed = {};
 
   PlayerMovementManager({
     required super.movementSpeed,
@@ -61,13 +64,34 @@ class PlayerMovementManager extends MovementManager {
   }
 
   void handleKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    final (Set<LogicalKeyboardKey> pressedKeys, Set<LogicalKeyboardKey> repeatedKeys) = _getPressedAndRepeatedKeysAndUpdateKeysHistory(keysPressed);
+
+    if (LogSettings.shouldLogKeyPresses) {
+      final List<String?> allKeysNames = keysPressed.map((key) => key.debugName).toList();
+      final List<String?> pressedKeyNames = pressedKeys.map((key) => key.debugName).toList();
+      final List<String?> repeatedKeyNames = repeatedKeys.map((key) => key.debugName).toList();
+      final String formattedTime = DateTime.now().toString().split(' ').last;
+      logger.f(
+        'Event Type: ${event.runtimeType}\nAll Keys In Event: $allKeysNames\nKeys Pressed: $pressedKeyNames\nRepeated Keys: $repeatedKeyNames\nTime: $formattedTime',
+      );
+    }
+
     _handleHorizontalMovementKeyPress(keysPressed);
     _handleVerticalMovementKeyPress(keysPressed);
-    _handleSkillsKeyPress(keysPressed);
+    if (event is KeyDownEvent) {
+      _handleSkillsKeyPress(pressedKeys);
+    }
 
-    // logger.f(keysPressed);
-    // logger.t('Player velocity in KeyEvent: $_velocity');
-    // logger.i('Player stored velocity in KeyEvent: $_storedVelocity');
+    if (LogSettings.shouldLogMovement) {
+      logger.d('Key event ended\nVelocity: $velocity\nStored velocity: $storedVelocity');
+    }
+  }
+
+  (Set<LogicalKeyboardKey> pressedKeys, Set<LogicalKeyboardKey> repeatedKeys) _getPressedAndRepeatedKeysAndUpdateKeysHistory(Set<LogicalKeyboardKey> keysPressed) {
+    final Set<LogicalKeyboardKey> repeatedKeys = keysLastPressed.intersection(keysPressed);
+    final Set<LogicalKeyboardKey> pressedKeys = keysPressed.difference(repeatedKeys);
+    keysLastPressed = keysPressed;
+    return (pressedKeys, repeatedKeys);
   }
 
   void _handleSkillsKeyPress(Set<LogicalKeyboardKey> keysPressed) {

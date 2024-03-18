@@ -12,7 +12,7 @@ import 'package:game/skills/attack.dart';
 import 'package:game/skills/dash.dart';
 
 class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
-  final String spritesPath = 'Characters/Main';
+  final String spritesPath = 'Heroes/Cloak';
   late final PlayerMovementManager playerMovementManager;
 
   Player() : super(name: 'Player', health: 100, maxHealth: 100) {
@@ -77,9 +77,24 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
   SpriteManager loadSpriteManager() {
     return SpriteManager(
       actor: this,
-      idleAnimationData: Animation(frameCount: 3, frameDuration: .33, image: game.images.fromCache('$spritesPath/IDLE.png')),
-      runAnimationData: Animation(frameCount: 8, frameDuration: 0.1, image: game.images.fromCache('$spritesPath/WALK.png')),
-      attackAnimationData: Animation(frameCount: 7, frameDuration: 0.1, image: game.images.fromCache('$spritesPath/ATTACK.png')),
+      idleAnimationData: Animation(
+        frameCount: 2,
+        frameDuration: .2,
+        image: game.images.fromCache('$spritesPath/IDLE.png'),
+        size: Vector2.all(32),
+      ),
+      runAnimationData: Animation(
+        frameCount: 8,
+        frameDuration: 0.1,
+        image: game.images.fromCache('$spritesPath/RUN.png'),
+        size: Vector2.all(32),
+      ),
+      attackAnimationData: Animation(
+        frameCount: 8,
+        frameDuration: 0.1,
+        image: game.images.fromCache('$spritesPath/ATTACK.png'),
+        size: Vector2.all(32),
+      ),
     );
   }
 }

@@ -16,17 +16,28 @@ class Dash extends Skill {
           description: 'Dash forward',
           type: SkillType.dash,
           coolDown: 2000,
+          isUninterruptibleAnimation: true,
+          isStoppingAnimation: false,
+          actorState: ActorState.running,
         );
 
   @override
-  void action() async {
-    final double horizontalMovement = actor.movementManager.velocity.horizontalFactor * range;
+  void action({final Actor? target}) async {
+    double horizontalMovement = actor.movementManager.velocity.horizontalFactor * range;
+    if (actor.movementManager.velocity.isZero()) {
+      horizontalMovement = actor.movementManager.isFacingLeft ? -range : range;
+    }
     final double verticalMovement = actor.movementManager.velocity.verticalFactor * range;
     final Vector2 dashVector = Vector2(horizontalMovement, verticalMovement);
 
     final double factor = actor.movementManager.velocity.isDiagonal ? 1 / sqrt2 : 1.0;
 
-    actor.skillManager.onSkillStart(super.type);
+    actor.skillManager.onSkillStart(
+      skillType: type,
+      isUninterruptibleAnimation: isUninterruptibleAnimation,
+      isStoppingAnimation: isStoppingAnimation,
+      actorState: actorState,
+    );
 
     actor.movementManager.velocity.add(dashVector * factor);
 
@@ -34,6 +45,10 @@ class Dash extends Skill {
       actor.movementManager.velocity.sub(dashVector * factor);
     });
 
-    actor.skillManager.onSkillEnd(super.type);
+    actor.skillManager.onSkillEnd(
+      skillType: type,
+      wasUninterruptibleAnimation: isUninterruptibleAnimation,
+      wasStoppingAnimation: isStoppingAnimation,
+    );
   }
 }
