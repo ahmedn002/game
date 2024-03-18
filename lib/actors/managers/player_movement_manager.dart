@@ -23,7 +23,7 @@ class PlayerMovementManager extends MovementManager {
 
   void _updatePosition(double dt) {
     // If no velocity and not in an uninterruptible animation
-    if (velocity.isZero() && !isInUninterruptibleAnimation) {
+    if (direction.isZero() && !isInUninterruptibleAnimation) {
       actor.current = ActorState.idle;
       return;
     }
@@ -35,10 +35,12 @@ class PlayerMovementManager extends MovementManager {
 
     // If we are doing an activity which requires the character to stop, set the velocity to zero
     if (isInStoppingAnimation) {
-      velocity.setZero();
+      direction.setZero();
     }
 
-    actor.position += velocity.normalized() * movementSpeed * dt;
+    velocity.setFrom(direction.normalized() * movementSpeed);
+
+    actor.position += velocity * dt;
   }
 
   void handleKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -61,7 +63,7 @@ class PlayerMovementManager extends MovementManager {
     }
 
     if (LogSettings.shouldLogMovement) {
-      logger.d('Key event ended\nVelocity: $velocity\nStored velocity: $storedVelocity');
+      logger.d('Key event ended\nVelocity: $direction\nStored velocity: $storedDirection');
     }
   }
 
@@ -84,7 +86,7 @@ class PlayerMovementManager extends MovementManager {
     final bool upKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp);
     final bool downKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
-    final Vector2 velocityToChange = isInUninterruptibleAnimation ? storedVelocity : velocity;
+    final Vector2 velocityToChange = isInUninterruptibleAnimation ? storedDirection : direction;
 
     if (upKeyPressed && downKeyPressed) {
       velocityToChange.y = 0;
@@ -101,7 +103,7 @@ class PlayerMovementManager extends MovementManager {
     final bool leftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final bool rightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
-    final Vector2 velocityToChange = isInUninterruptibleAnimation ? storedVelocity : velocity;
+    final Vector2 velocityToChange = isInUninterruptibleAnimation ? storedDirection : direction;
 
     if (leftKeyPressed && rightKeyPressed) {
       velocityToChange.x = 0;

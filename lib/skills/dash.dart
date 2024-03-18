@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:game/actors/actor.dart';
 import 'package:game/skills/skill.dart';
@@ -23,14 +21,16 @@ class Dash extends Skill {
 
   @override
   void action({final Actor? target}) async {
-    double horizontalMovement = actor.movementManager.velocity.horizontalFactor * range;
-    if (actor.movementManager.velocity.isZero()) {
-      horizontalMovement = actor.movementManager.isFacingLeft ? -range : range;
-    }
-    final double verticalMovement = actor.movementManager.velocity.verticalFactor * range;
-    final Vector2 dashVector = Vector2(horizontalMovement, verticalMovement);
+    int horizontalDirection = actor.movementManager.direction.horizontalFactor;
 
-    final double factor = actor.movementManager.velocity.isDiagonal ? 1 / sqrt2 : 1.0;
+    if (actor.movementManager.direction.isZero()) {
+      horizontalDirection = actor.movementManager.isFacingLeft ? -1 : 1;
+    }
+
+    actor.movementManager.direction.setValues(horizontalDirection.toDouble(), 0);
+
+    final double oldMovementSpeed = actor.movementManager.movementSpeed;
+    actor.movementManager.movementSpeed = range;
 
     actor.skillManager.onSkillStart(
       skillType: type,
@@ -39,10 +39,9 @@ class Dash extends Skill {
       actorState: actorState,
     );
 
-    actor.movementManager.velocity.add(dashVector * factor);
-
     await Future.delayed(duration, () {
-      actor.movementManager.velocity.sub(dashVector * factor);
+      actor.movementManager.direction.setZero();
+      actor.movementManager.movementSpeed = oldMovementSpeed;
     });
 
     actor.skillManager.onSkillEnd(

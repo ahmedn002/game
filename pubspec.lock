@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
+  flame_lint:
+    dependency: "direct main"
+    description:
+      name: flame_lint
+      sha256: "7dad67385e72cc8441cf39d2dfe16d69cc1687f56d91d5b27d7734f410d4edab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   flame_tiled:
     dependency: "direct main"
     description:

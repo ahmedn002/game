@@ -38,12 +38,12 @@ class SkillManager {
         isExecutingSkill = false;
         movementManager.isInUninterruptibleAnimation = false;
         movementManager.isInStoppingAnimation = false;
-        movementManager.velocity.setFrom(movementManager.storedVelocity);
-        movementManager.storedVelocity.setZero();
+        movementManager.direction.setFrom(movementManager.storedDirection);
+        movementManager.storedDirection.setZero();
         actor.current = ActorState.idle;
 
         if (LogSettings.shouldLogMovement) {
-          logger.d('Dash interrupted current skill\nVelocity: ${movementManager.velocity}\nStored velocity: ${movementManager.storedVelocity}');
+          logger.d('Dash interrupted current skill\nVelocity: ${movementManager.direction}\nStored velocity: ${movementManager.storedDirection}');
         }
       }
 
@@ -68,7 +68,7 @@ class SkillManager {
     movementManager.isInUninterruptibleAnimation = isUninterruptibleAnimation;
 
     if (isUninterruptibleAnimation) {
-      movementManager.storedVelocity.setFrom(movementManager.velocity);
+      movementManager.storedDirection.setFrom(movementManager.direction);
     }
 
     movementManager.isInStoppingAnimation = isStoppingAnimation;
@@ -86,11 +86,11 @@ class SkillManager {
 
     if (wasUninterruptibleAnimation) {
       movementManager.isInUninterruptibleAnimation = false;
-      movementManager.velocity.setFrom(movementManager.storedVelocity);
-      movementManager.storedVelocity.setZero();
+      movementManager.direction.setFrom(movementManager.storedDirection);
+      movementManager.storedDirection.setZero();
 
       if (LogSettings.shouldLogMovement) {
-        logger.d('Skill ended, Type: ${skillType.name}\nVelocity: ${movementManager.velocity}\nStored velocity: ${movementManager.storedVelocity}');
+        logger.d('Skill ended, Type: ${skillType.name}\nVelocity: ${movementManager.direction}\nStored velocity: ${movementManager.storedDirection}');
       }
     }
 

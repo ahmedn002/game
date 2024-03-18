@@ -2,9 +2,10 @@ import 'package:flame/components.dart';
 import 'package:game/actors/actor.dart';
 
 abstract class MovementManager {
-  final double movementSpeed;
+  double movementSpeed;
+  late final Vector2 direction;
+  late final Vector2 storedDirection;
   late final Vector2 velocity;
-  late final Vector2 storedVelocity;
   bool isFacingLeft;
   bool isInUninterruptibleAnimation;
   bool isInStoppingAnimation;
@@ -17,7 +18,8 @@ abstract class MovementManager {
     this.isInStoppingAnimation = false,
     required this.actor,
   }) {
-    storedVelocity = Vector2.zero();
+    storedDirection = Vector2.zero();
+    direction = Vector2.zero();
     velocity = Vector2.zero();
   }
 
@@ -26,11 +28,11 @@ abstract class MovementManager {
   }
 
   void _handleSpriteFlipByMovementDirection() {
-    if (velocity.x == 0) return;
+    if (direction.x == 0) return;
 
     final bool isFacingLeft = actor.isFlippedHorizontally;
 
-    final bool isMovingRight = velocity.x > 0;
+    final bool isMovingRight = direction.x > 0;
 
     if ((isFacingLeft && isMovingRight) || (!isFacingLeft && !isMovingRight)) {
       actor.flipHorizontallyAroundCenter();

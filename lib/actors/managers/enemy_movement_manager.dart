@@ -39,11 +39,11 @@ class EnemyMovementManager extends MovementManager {
       movementBehavior = circulatingMovementBehavior;
     }
 
-    velocity.setFrom(movementBehavior.calculateVelocity());
+    direction.setFrom(movementBehavior.calculateVelocity());
 
-    actor.position += velocity * dt;
+    actor.position += direction * dt;
 
-    if (velocity.isZero()) {
+    if (direction.isZero()) {
       actor.current = ActorState.idle;
     } else {
       actor.current = ActorState.running;
