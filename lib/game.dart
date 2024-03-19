@@ -18,6 +18,8 @@ class MyGame extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks 
 
   @override
   FutureOr<void> onLoad() async {
+    debugMode = true;
+
     await images.loadAllImages();
     _createLevel();
     _initCamera();

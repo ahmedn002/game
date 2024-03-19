@@ -7,7 +7,7 @@ import 'package:game/actors/player.dart';
 import 'package:game/main.dart';
 import 'package:game/utils/settings/logs.dart';
 
-class Level extends World {
+class Level extends World with HasCollisionDetection {
   late TiledComponent level;
 
   final String levelName;

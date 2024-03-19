@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:game/actors/components/health_bar.dart';
 import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/actors/managers/skill_manager.dart';
 import 'package:game/actors/managers/sprite_loader.dart';
+import 'package:game/main.dart';
 
-abstract class Actor extends SpriteAnimationGroupComponent {
+abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbacks {
   final String name;
   final double health;
   final double maxHealth;
@@ -42,6 +44,8 @@ abstract class Actor extends SpriteAnimationGroupComponent {
         barSize: Vector2(size.x, 5),
       ),
     );
+
+    add(RectangleHitbox());
     return super.onLoad();
   }
 
@@ -65,6 +69,12 @@ abstract class Actor extends SpriteAnimationGroupComponent {
     spriteManager = loadSpriteManager();
     movementManager = loadMovementManager();
     skillManager = loadSkillManager();
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    logger.i('Collision detected with $other');
+    super.onCollision(intersectionPoints, other);
   }
 }
 
