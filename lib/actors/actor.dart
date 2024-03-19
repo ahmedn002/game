@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:game/actors/components/health_bar.dart';
 import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/actors/managers/skill_manager.dart';
 import 'package:game/actors/managers/sprite_loader.dart';
@@ -32,6 +33,15 @@ abstract class Actor extends SpriteAnimationGroupComponent {
       initialState: ActorState.idle,
     );
     anchor = Anchor.center;
+
+    add(
+      HealthBar(
+        maxHealth: maxHealth,
+        updateHealth: () => health,
+        shouldFlip: () => isFlippedHorizontally,
+        barSize: Vector2(size.x, 5),
+      ),
+    );
     return super.onLoad();
   }
 
