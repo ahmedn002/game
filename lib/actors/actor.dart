@@ -6,11 +6,10 @@ import 'package:game/actors/components/health_bar.dart';
 import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/actors/managers/skill_manager.dart';
 import 'package:game/actors/managers/sprite_loader.dart';
-import 'package:game/main.dart';
 
 abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbacks {
   final String name;
-  final double health;
+  double health;
   final double maxHealth;
 
   late final SpriteManager spriteManager;
@@ -73,19 +72,15 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    logger.i('Collision detected with $other');
+    // logger.i('Collision detected with $other');
     super.onCollision(intersectionPoints, other);
+  }
+
+  void takeDamage(double damage) {
+    health -= damage;
   }
 }
 
 enum ActorState { idle, running, attacking }
 
 enum Direction { left, right, up, down, none }
-
-enum SkillType {
-  dash,
-  attack,
-  heal,
-  buff,
-  debuff,
-}

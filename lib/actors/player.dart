@@ -8,7 +8,7 @@ import 'package:game/actors/managers/player_movement_manager.dart';
 import 'package:game/actors/managers/skill_manager.dart';
 import 'package:game/actors/managers/sprite_loader.dart';
 import 'package:game/game.dart';
-import 'package:game/skills/attack.dart';
+import 'package:game/skills/basic_attack.dart';
 import 'package:game/skills/dash.dart';
 
 class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
@@ -39,7 +39,7 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
   void _loadMovementManagerKeyCallbacks() {
     playerMovementManager.keyPressCallbacks = {
       LogicalKeyboardKey.space: super.skillManager.loadSkillIntoQueue<Dash>,
-      LogicalKeyboardKey.keyQ: super.skillManager.loadSkillIntoQueue<Attack>,
+      LogicalKeyboardKey.keyQ: super.skillManager.loadSkillIntoQueue<BasicAttack>,
     };
   }
 
@@ -49,7 +49,7 @@ class Player extends Actor with HasGameRef<MyGame>, KeyboardHandler {
       actor: this,
       movementManager: movementManager,
       equippedSkills: [
-        Attack(actor: this),
+        BasicAttack(actor: this),
         Dash(actor: this),
       ],
     );

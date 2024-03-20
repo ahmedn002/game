@@ -4,6 +4,7 @@ import 'package:game/actors/actor.dart';
 import '../../ai/movement behaviors/circulating_movement_behavior.dart';
 import '../../ai/movement behaviors/following_movement_behavior.dart';
 import '../../ai/movement behaviors/movement_behavior.dart';
+import '../../ai/movement behaviors/stopped_movement_behavior.dart';
 import 'movement_manager.dart';
 
 class EnemyMovementManager extends MovementManager {
@@ -13,6 +14,7 @@ class EnemyMovementManager extends MovementManager {
 
   late final FollowingMovementBehavior followingMovementBehavior;
   late final CirculatingMovementBehavior circulatingMovementBehavior;
+  late final StoppedMovementBehavior stoppedMovementBehavior;
 
   EnemyMovementManager({
     required super.actor,
@@ -28,6 +30,10 @@ class EnemyMovementManager extends MovementManager {
       movementSpeed: movementSpeed,
       target: player,
     );
+    stoppedMovementBehavior = StoppedMovementBehavior(
+      actor: actor,
+      movementSpeed: movementSpeed,
+    );
     movementBehavior = followingMovementBehavior;
   }
 
@@ -36,7 +42,7 @@ class EnemyMovementManager extends MovementManager {
     if (_distanceToPlayer() > 20) {
       movementBehavior = followingMovementBehavior;
     } else {
-      movementBehavior = circulatingMovementBehavior;
+      movementBehavior = stoppedMovementBehavior;
     }
 
     direction.setFrom(movementBehavior.calculateVelocity());

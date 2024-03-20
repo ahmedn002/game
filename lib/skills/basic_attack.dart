@@ -1,8 +1,12 @@
+import 'package:flame/components.dart';
+import 'package:flame/layout.dart';
 import 'package:game/actors/actor.dart';
-import 'package:game/skills/skill.dart';
+import 'package:game/actors/components/damaging_hitbox.dart';
+import 'package:game/skills/types/aoe_attack.dart';
+import 'package:game/skills/types/enums.dart';
 
-class Attack extends Skill {
-  Attack({
+class BasicAttack extends AOEAttack {
+  BasicAttack({
     required super.actor,
   }) : super(
           name: 'Attack',
@@ -12,6 +16,8 @@ class Attack extends Skill {
           isUninterruptibleAnimation: true,
           isStoppingAnimation: true,
           actorState: ActorState.attacking,
+          damage: 10,
+          damageType: DamageType.physical,
         );
 
   @override
@@ -22,8 +28,21 @@ class Attack extends Skill {
       isStoppingAnimation: isStoppingAnimation,
       actorState: actorState,
     );
+    await Future.delayed(const Duration(milliseconds: 300));
 
-    await Future.delayed(const Duration(milliseconds: 700));
+    final Component hitBox = AlignComponent(
+      alignment: Anchor.centerRight,
+      child: DamagingHitbox(
+        skill: this,
+        size: Vector2(actor.width / 2, actor.height),
+      ),
+    );
+
+    actor.add(hitBox);
+
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    actor.remove(hitBox);
 
     actor.skillManager.onSkillEnd(
       skillType: type,
@@ -31,5 +50,10 @@ class Attack extends Skill {
       wasStoppingAnimation: isStoppingAnimation,
       wasDashInterrupted: actor.skillManager.currentSkillHasBeenDashInterrupted,
     );
+  }
+
+  @override
+  double calculateDamageWithModifiers() {
+    return 10;
   }
 }

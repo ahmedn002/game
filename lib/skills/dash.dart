@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:game/actors/actor.dart';
-import 'package:game/skills/skill.dart';
+import 'package:game/skills/types/enums.dart';
+import 'package:game/skills/types/skill.dart';
 import 'package:game/utils/extensions/vector.dart';
 
 class Dash extends Skill {

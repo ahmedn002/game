@@ -1,5 +1,7 @@
 import 'package:game/actors/actor.dart';
 
+import 'enums.dart';
+
 abstract class Skill {
   final String name;
   final String description;
@@ -25,9 +27,9 @@ abstract class Skill {
 
   // Should call execute when the skill is used
   // Handles the cooldown and the action of the skill
-  void execute({final Actor? target}) {
+  void execute() {
     if (!isOnCoolDown) {
-      action(target: target);
+      action();
       isOnCoolDown = true;
       Future.delayed(Duration(microseconds: (coolDown * 1000).toInt()), () {
         isOnCoolDown = false;
@@ -36,5 +38,5 @@ abstract class Skill {
   }
 
   // Should override action when implementing a new skill
-  void action({final Actor? target});
+  void action();
 }
