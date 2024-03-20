@@ -9,7 +9,7 @@ import 'package:game/actors/managers/sprite_loader.dart';
 
 abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbacks {
   final String name;
-  double health;
+  double _health;
   final double maxHealth;
 
   late final SpriteManager spriteManager;
@@ -18,9 +18,20 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
 
   Actor({
     required this.name,
-    required this.health,
+    required double health,
     required this.maxHealth,
-  });
+  }) : _health = health;
+
+  double get health => _health;
+  set health(double value) {
+    if (value > maxHealth) {
+      _health = maxHealth;
+    } else if (value < 0) {
+      _health = 0;
+    } else {
+      _health = value;
+    }
+  }
 
   @override
   FutureOr<void> onLoad() {
@@ -38,7 +49,7 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
     add(
       HealthBar(
         maxHealth: maxHealth,
-        updateHealth: () => health,
+        updateHealth: () => _health,
         shouldFlip: () => isFlippedHorizontally,
         barSize: Vector2(size.x, 5),
       ),
