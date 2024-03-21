@@ -28,7 +28,9 @@ class Dash extends Skill {
       horizontalDirection = actor.movementManager.isFacingLeft ? -1 : 1;
     }
 
-    actor.movementManager.direction.setValues(horizontalDirection.toDouble(), 0);
+    final verticalDirection = actor.movementManager.direction.verticalFactor;
+
+    actor.movementManager.direction.setValues(horizontalDirection.toDouble(), verticalDirection.toDouble());
 
     final double oldMovementSpeed = actor.movementManager.movementSpeed;
     actor.movementManager.movementSpeed = range;

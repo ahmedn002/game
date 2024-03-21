@@ -10,16 +10,16 @@ class TestScreen extends StatelessWidget {
       backgroundColor: Colors.black26,
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: 200,
               height: 200,
               child: CustomPaint(
                 painter: MyCustomPainter(),
-                child: Container(),
               ),
             ),
-            Text(
+            const Text(
               'Hello, world!',
               style: TextStyle(
                 color: Colors.white,
@@ -30,6 +30,39 @@ class TestScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class HeartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.fill;
+    final path = Path()
+      ..moveTo(size.width / 2, size.height / 5)
+      ..cubicTo(
+        size.width / 5,
+        0,
+        0,
+        size.height / 3.5,
+        size.width / 2,
+        size.height,
+      )
+      ..cubicTo(
+        size.width,
+        size.height / 3.5,
+        size.width * 4 / 5,
+        0,
+        size.width / 2,
+        size.height / 5,
+      );
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
 
