@@ -28,7 +28,10 @@ class DamagingHitbox extends PositionComponent with CollisionCallbacks {
     // and has not been damaged already by this skill (Because this gets called every update)
     if (other is Actor && other != skill.actor && !damagedActors.contains(other)) {
       logger.i('Damaging ${other.runtimeType}');
-      other.takeDamage(skill.calculateDamageWithModifiers());
+      other.takeDamage(
+        skill.calculateDamageWithModifiers(),
+        Vector2(0, 0),
+      );
       damagedActors.add(other);
       return;
     }

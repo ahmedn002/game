@@ -28,7 +28,7 @@ class BasicAttack extends AOEAttack {
       isStoppingAnimation: isStoppingAnimation,
       actorState: actorState,
     );
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     final Component hitBox = AlignComponent(
       alignment: Anchor.centerRight,
@@ -40,7 +40,7 @@ class BasicAttack extends AOEAttack {
 
     actor.add(hitBox);
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     actor.remove(hitBox);
 

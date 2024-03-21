@@ -42,7 +42,7 @@ class EnemyMovementManager extends MovementManager {
     if (_distanceToPlayer() > 20) {
       movementBehavior = followingMovementBehavior;
     } else {
-      movementBehavior = stoppedMovementBehavior;
+      movementBehavior = circulatingMovementBehavior;
     }
 
     direction.setFrom(movementBehavior.calculateVelocity());
