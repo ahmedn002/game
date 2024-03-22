@@ -6,11 +6,8 @@ import 'package:flame/effects.dart';
 import 'package:flame/text.dart';
 import 'package:flutter/animation.dart';
 
-import '../actor.dart';
-
 class DamageNumber extends TextComponent {
   final double damage;
-  late final Actor actor;
   double opacity = 1.0;
   final TextPaint textPaint = TextPaint(
     style: const TextStyle(
@@ -25,7 +22,6 @@ class DamageNumber extends TextComponent {
 
   @override
   async.FutureOr<void> onLoad() {
-    actor = parent!.parent as Actor;
     addAll(
       [
         MoveAlongPathEffect(
@@ -53,15 +49,9 @@ class DamageNumber extends TextComponent {
 
   @override
   void update(double dt) {
-    if (actor.isFlippedHorizontally && !isFlippedHorizontally) {
-      flipHorizontallyAroundCenter();
-    } else if (!actor.isFlippedHorizontally && isFlippedHorizontally) {
-      flipHorizontallyAroundCenter();
-    }
-
     textRenderer = TextPaint(
       style: TextStyle(
-        color: Color(0xFFFFFFFF).withOpacity(opacity),
+        color: const Color(0xFFFFFFFF).withOpacity(opacity),
         fontSize: 12,
       ),
     );

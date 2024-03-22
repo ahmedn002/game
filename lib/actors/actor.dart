@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/layout.dart';
-import 'package:game/actors/components/damage_number.dart';
 import 'package:game/actors/components/health_bar.dart';
 import 'package:game/actors/managers/movement_manager.dart';
 import 'package:game/actors/managers/skill_manager.dart';
 import 'package:game/actors/managers/sprite_loader.dart';
+
+import 'components/damage_number.dart';
 
 abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbacks {
   final String name;
@@ -93,10 +93,12 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
   void takeDamage(double damage, Vector2 force) {
     health -= damage;
 
-    add(AlignComponent(
-      alignment: Anchor.center,
-      child: DamageNumber(damage),
-    ));
+    parent?.add(
+      PositionComponent(
+        position: position,
+        children: [DamageNumber(damage)],
+      ),
+    );
 
     movementManager.addExponentiallyDecayingForce(force);
   }
