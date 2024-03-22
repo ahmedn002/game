@@ -35,6 +35,8 @@ class BasicAttack extends AOEAttack {
       child: DamagingHitbox(
         skill: this,
         size: Vector2(actor.width / 2, actor.height),
+        // Downward attack
+        attackForceDirection: Vector2(0, 1),
       ),
     );
 

@@ -9,10 +9,12 @@ import 'package:game/skills/types/attack.dart';
 class DamagingHitbox extends PositionComponent with CollisionCallbacks {
   final Attack skill;
   final List<Actor> damagedActors = [];
+  final Vector2 attackForceDirection;
 
   DamagingHitbox({
     required this.skill,
     required super.size,
+    required this.attackForceDirection,
   });
 
   @override
@@ -32,8 +34,13 @@ class DamagingHitbox extends PositionComponent with CollisionCallbacks {
 
       final Vector2 intersectionPointsSum = intersectionPoints.reduce((value, element) => value + element);
       final Vector2 intersectionPointsAverage = intersectionPointsSum / intersectionPoints.length.toDouble();
-      final Vector2 forceDirection = (other.position - intersectionPointsAverage).normalized();
-      final Vector2 force = forceDirection * damage;
+      final Vector2 exertedForceDirection = (other.position - intersectionPointsAverage).normalized();
+
+      // Exerted Force: The force exerted by the skill on the contacted actor depending on the center of the hitbox and position of the actor
+      // Attack Force: The original direction of the attack itself
+      final Vector2 averageForceDirection = exertedForceDirection * 0.3 + attackForceDirection * 0.7;
+
+      final Vector2 force = averageForceDirection * damage;
 
       other.takeDamage(damage, force);
 
