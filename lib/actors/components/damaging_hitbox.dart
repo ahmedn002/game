@@ -38,7 +38,8 @@ class DamagingHitbox extends PositionComponent with CollisionCallbacks {
 
       // Exerted Force: The force exerted by the skill on the contacted actor depending on the center of the hitbox and position of the actor
       // Attack Force: The original direction of the attack itself
-      final Vector2 averageForceDirection = exertedForceDirection * 0.3 + attackForceDirection * 0.7;
+      const double alpha = 0.7;
+      final Vector2 averageForceDirection = (exertedForceDirection * alpha) + (attackForceDirection * (1 - alpha));
 
       final Vector2 force = averageForceDirection * damage;
 
