@@ -1,4 +1,3 @@
-import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
 class TestScreen extends StatelessWidget {
@@ -17,6 +16,7 @@ class TestScreen extends StatelessWidget {
               height: 200,
               child: CustomPaint(
                 painter: MyCustomPainter(),
+                // painter: HeartPainter(), // Try this, the content will show up normally
               ),
             ),
             const Text(
@@ -69,11 +69,11 @@ class HeartPainter extends CustomPainter {
 class MyCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final textStyle = TextStyle(
+    const textStyle = TextStyle(
       color: Colors.black,
       fontSize: 30,
     );
-    final textSpan = TextSpan(
+    const textSpan = TextSpan(
       text: 'Hello, world!',
       style: textStyle,
     );
@@ -85,10 +85,12 @@ class MyCustomPainter extends CustomPainter {
       minWidth: 0,
       maxWidth: size.width,
     );
+
     final offset = Offset(size.width / 2, size.height / 2);
-    final paint = BasicPalette.white.paint();
-    final srcOverPaint = Paint()..blendMode = BlendMode.difference;
-    canvas.saveLayer(null, srcOverPaint);
+    final paint = Paint()..color = Colors.white;
+    final srcOverPaint = Paint()..blendMode = BlendMode.srcOver;
+
+    canvas.saveLayer(Offset.zero & size, srcOverPaint);
     textPainter.paint(canvas, offset);
     canvas.drawPaint(paint);
     canvas.restore();

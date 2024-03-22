@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/layout.dart';
-import 'package:flutter/animation.dart';
 import 'package:game/actors/components/damage_number.dart';
 import 'package:game/actors/components/health_bar.dart';
 import 'package:game/actors/managers/movement_manager.dart';
@@ -98,14 +95,6 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
     add(AlignComponent(
       alignment: Anchor.center,
       child: DamageNumber(damage),
-    ));
-
-    add(MoveAlongPathEffect(
-      Path()..quadraticBezierTo(25, -10, 50, 0),
-      EffectController(
-        duration: 0.5,
-        curve: Curves.easeOutExpo,
-      ),
     ));
   }
 }

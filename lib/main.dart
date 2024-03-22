@@ -5,11 +5,9 @@ import 'package:game/game.dart';
 import 'package:logger/logger.dart';
 
 final Logger logger = Logger();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
-  // runApp(MaterialApp(home: TestScreen()));
   runApp(GameWidget(game: MyGame()));
 }
