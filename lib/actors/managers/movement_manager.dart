@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:game/actors/actor.dart';
 import 'package:game/main.dart';
@@ -45,7 +47,7 @@ abstract class MovementManager {
   void addExponentiallyDecayingForce(Vector2 force) {
     externalForces.add(
       CalculatedVector2((int counter) {
-        return force * (1 / (counter + 1));
+        return force * exp(-counter * 0.5);
       }),
     );
   }
@@ -65,6 +67,12 @@ abstract class MovementManager {
     }
 
     logger.i('Total Force: $totalForce');
+
+    for (int i = 0; i < externalForces.length; i++) {
+      if (externalForces[i].killed) {
+        externalForces.removeAt(i);
+      }
+    }
 
     velocity.setFrom(velocity + totalForce * 200);
   }

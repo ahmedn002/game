@@ -41,7 +41,7 @@ class DamagingHitbox extends PositionComponent with CollisionCallbacks {
       const double alpha = 0.7;
       final Vector2 averageForceDirection = (exertedForceDirection * alpha) + (attackForceDirection * (1 - alpha));
 
-      final Vector2 force = averageForceDirection * damage;
+      final Vector2 force = averageForceDirection.normalized() * damage;
 
       other.takeDamage(damage, force);
 
