@@ -31,10 +31,10 @@ class BasicAttack extends AOEAttack {
     await Future.delayed(const Duration(milliseconds: 500));
 
     final Component hitBox = AlignComponent(
-      alignment: Anchor.centerRight,
+      alignment: Anchor.bottomRight,
       child: DamagingHitbox(
         skill: this,
-        size: Vector2(actor.width / 2, actor.height),
+        size: Vector2(actor.width * 0.3, actor.height * 0.7),
         // Downward attack
         attackForceDirection: Vector2(0, 1),
       ),

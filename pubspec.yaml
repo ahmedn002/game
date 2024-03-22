@@ -101,4 +101,13 @@ flutter:
     - assets/images/Heroes/Cloak/
     - assets/images/Terrain/
     - assets/tiles/
+    - assets/fonts/
+
+  fonts:
+    - family: Dogica
+      fonts:
+        - asset: assets/fonts/dogica.ttf
+          weight: 400
+        - asset: assets/fonts/dogicabold.ttf
+          weight: 700
 

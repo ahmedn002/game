@@ -13,6 +13,7 @@ class DamageNumber extends TextComponent {
     style: const TextStyle(
       color: Color(0xFFFFFFFF),
       fontSize: 12,
+      fontFamily: 'Dogica',
     ),
   );
 
@@ -34,16 +35,16 @@ class DamageNumber extends TextComponent {
       ],
     );
 
-    async.Timer.periodic(
-      const Duration(milliseconds: 20),
-      (timer) {
-        opacity -= 0.1;
-        if (opacity <= 0) {
-          timer.cancel();
-          removeFromParent();
-        }
-      },
-    );
+    // async.Timer.periodic(
+    //   const Duration(milliseconds: 20),
+    //   (timer) {
+    //     opacity -= 0.1;
+    //     if (opacity <= 0) {
+    //       timer.cancel();
+    //       removeFromParent();
+    //     }
+    //   },
+    // );
     return super.onLoad();
   }
 
@@ -53,6 +54,7 @@ class DamageNumber extends TextComponent {
       style: TextStyle(
         color: const Color(0xFFFFFFFF).withOpacity(opacity),
         fontSize: 12,
+        fontFamily: 'Dogica',
       ),
     );
 
