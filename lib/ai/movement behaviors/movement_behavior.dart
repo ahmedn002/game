@@ -7,5 +7,5 @@ abstract class MovementBehavior {
 
   MovementBehavior({required this.actor, required this.movementSpeed});
 
-  Vector2 calculateVelocity();
+  Vector2 calculateDirection();
 }

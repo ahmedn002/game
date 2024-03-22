@@ -9,8 +9,8 @@ class CirculatingMovementBehavior extends TargetedMovementBehavior {
   });
 
   @override
-  Vector2 calculateVelocity() {
-    final Vector2 shortestPathVelocity = getShortestPathVelocity(target.position);
+  Vector2 calculateDirection() {
+    final Vector2 shortestPathVelocity = getShortestPathDirection(target.position);
     final Vector2 perpendicularVelocity = Vector2(-shortestPathVelocity.y, shortestPathVelocity.x);
 
     return perpendicularVelocity;

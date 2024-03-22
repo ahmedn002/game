@@ -9,7 +9,7 @@ class FollowingMovementBehavior extends TargetedMovementBehavior {
   });
 
   @override
-  Vector2 calculateVelocity() {
-    return getShortestPathVelocity(target.position);
+  Vector2 calculateDirection() {
+    return getShortestPathDirection(target.position);
   }
 }

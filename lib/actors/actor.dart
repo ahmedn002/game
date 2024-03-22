@@ -65,6 +65,7 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
   void update(double dt) {
     movementManager.update(dt);
     skillManager.update(dt);
+    priority = position.y.toInt(); // Z-index based on vertical position to fake depth
     super.update(dt);
   }
 
@@ -96,6 +97,8 @@ abstract class Actor extends SpriteAnimationGroupComponent with CollisionCallbac
       alignment: Anchor.center,
       child: DamageNumber(damage),
     ));
+
+    movementManager.addExponentiallyDecayingForce(force);
   }
 }
 

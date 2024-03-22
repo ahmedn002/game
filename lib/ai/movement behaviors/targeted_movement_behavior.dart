@@ -11,12 +11,12 @@ abstract class TargetedMovementBehavior extends MovementBehavior {
     required this.target,
   });
 
-  Vector2 getShortestPathVelocity(Vector2 targetPosition) {
+  Vector2 getShortestPathDirection(Vector2 targetPosition) {
     final double dx = targetPosition.x - actor.position.x;
     final double dy = targetPosition.y - actor.position.y;
 
     final Vector2 directionalityVector = Vector2(dx, dy).normalized();
 
-    return directionalityVector * movementSpeed;
+    return directionalityVector;
   }
 }
